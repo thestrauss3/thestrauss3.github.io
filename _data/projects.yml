@@ -1,0 +1,12 @@
+# Projects shown under "Projects behind the notes".
+# `url` is optional; when set, the project name becomes a link.
+# TODO: these are the sample projects from the mockup; replace with your own.
+- name: Trail Log
+  url:
+  summary: A map of hikes worth revisiting, with notes on routes and trail conditions.
+  detail: "One detail to explore: saving an entry offline and syncing it when reception returns."
+
+- name: Reading Queue
+  url:
+  summary: A small app for saving articles and finding them again by topic.
+  detail: "One detail to explore: recognizing the same article when two URLs have different tracking parameters."

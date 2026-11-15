@@ -1,3 +1,10 @@
-theme: jekyll-theme-minimal
-title: Joseph Strauss's homepage
-description: Bookmark this to keep an eye on my project updates!
+title: Joseph Strauss
+description: Full-stack software engineer in San Diego. Engineering notes, projects, and résumé.
+
+author:
+  name: Joseph Strauss
+  role: Full-stack software engineer
+  github: thestrauss3
+  # Fill these in to show the links under Contact:
+  email:
+  linkedin:   # full URL, e.g. https://www.linkedin.com/in/your-handle
