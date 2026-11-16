@@ -1,0 +1,62 @@
+/* "Engineering notes" design */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font: 1rem/1.6 system-ui, sans-serif;
+  background: #f4f1ff;
+  color: #27213d;
+}
+a { color: inherit; text-underline-offset: .23em; }
+:focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
+h1, h2, p { margin: 0; }
+
+.notes { min-height: 100svh; padding: clamp(2rem, 6vw, 6rem) 0; }
+.notes .wrap {
+  width: min(66rem, 88%);
+  margin: auto;
+  display: grid;
+  grid-template-columns: minmax(13rem, 1fr) minmax(0, 2fr);
+  gap: 2.5rem 4rem;
+}
+.notes .wrap > .page-nav,
+.notes .wrap > .portfolio-section { grid-column: 1 / -1; }
+
+/* Top nav */
+.page-nav { display: flex; flex-wrap: wrap; gap: .25rem 1.2rem; font-size: .93rem; }
+.page-nav a, .contact-links a { display: inline-flex; align-items: center; min-height: 44px; }
+
+/* Intro */
+.notes h1 {
+  font: 400 clamp(2.8rem, 6vw, 4.7rem)/1 "DM Serif Text", Georgia, serif;
+  letter-spacing: -.055em;
+}
+.role { margin-top: .9rem; }
+.notes aside p + p { margin-top: 1rem; }
+
+/* Notes list */
+.notes h2 { font-size: 1.1rem; margin-bottom: .7rem; }
+.notes details { border-top: 1px solid #aa9ec8; padding: .8rem 0; }
+.notes details:last-child { border-bottom: 1px solid #aa9ec8; }
+.notes summary { min-height: 44px; cursor: pointer; font-size: clamp(1.2rem, 3vw, 1.6rem); font-weight: 600; }
+.notes details p { max-width: 40rem; }
+
+/* Lower sections */
+.portfolio-section { padding-top: 1.25rem; border-top: 1px solid currentColor; }
+.portfolio-section h2 { margin-bottom: .65rem; font-size: clamp(1.45rem, 4vw, 2rem); }
+.portfolio-section p { max-width: 43rem; }
+.portfolio-section h3 { margin: 0 0 .35rem; font-size: 1.1rem; }
+.portfolio-section article + article,
+.portfolio-section article + p { margin-top: 1.2rem; }
+
+.project-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.project-pair article { margin: 0 !important; }
+.project-pair p + p { margin-top: .55rem; }
+
+.contact-links { display: flex; flex-wrap: wrap; gap: .25rem 1.2rem; margin: .4rem 0 0; }
+
+@media (max-width: 42rem) {
+  .notes .wrap { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 34rem) {
+  .project-pair { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,70 @@
+---
+layout: default
+---
+<section class="notes" aria-labelledby="name">
+  <div class="wrap">
+    <nav class="page-nav" aria-label="Site">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#resume">Résumé</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <aside>
+      <h1 id="name">{{ site.author.name }}</h1>
+      <p class="role">{{ site.author.role }}</p>
+      <p>I write about things I build and what I learn along the way.</p>
+    </aside>
+
+    <div>
+      <h2>Engineering notes</h2>
+      {% for note in site.data.notes %}
+      <details{% if forloop.first %} open{% endif %}>
+        <summary>{{ note.title }}</summary>
+        <p>{{ note.body }}</p>
+      </details>
+      {% endfor %}
+    </div>
+
+    <div class="portfolio-section" id="projects">
+      <h2>Projects behind the notes</h2>
+      <div class="project-pair">
+        {% for project in site.data.projects %}
+        <article>
+          <h3>{% if project.url %}<a href="{{ project.url }}">{{ project.name }}</a>{% else %}{{ project.name }}{% endif %}</h3>
+          <p>{{ project.summary }}</p>
+          {% if project.detail %}<p>{{ project.detail }}</p>{% endif %}
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="portfolio-section" id="about">
+      <h2>About</h2>
+      <p>Full-stack software engineer in San Diego. I build web applications with Angular, TypeScript, and C#/.NET.</p>
+    </div>
+
+    <div class="portfolio-section" id="resume">
+      <h2>Résumé</h2>
+      <!-- TODO: fill in your roles, then drop a PDF at assets/resume.pdf and link it below. -->
+      <article>
+        <h3>[Most recent role] · [Organization]</h3>
+        <p>[Dates] · [One sentence about what you owned or delivered.]</p>
+      </article>
+      <article>
+        <h3>[Previous role, education, or open-source work]</h3>
+        <p>[Dates] · [One sentence about your contribution or a relevant accomplishment.]</p>
+      </article>
+    </div>
+
+    <div class="portfolio-section" id="contact">
+      <h2>Contact</h2>
+      <p>Want to get in touch? Email is the best place to start.</p>
+      <p class="contact-links">
+        {% if site.author.email %}<a href="mailto:{{ site.author.email }}">Email</a>{% endif %}
+        {% if site.author.github %}<a href="https://github.com/{{ site.author.github }}">GitHub</a>{% endif %}
+        {% if site.author.linkedin %}<a href="{{ site.author.linkedin }}">LinkedIn</a>{% endif %}
+      </p>
+    </div>
+  </div>
+</section>
