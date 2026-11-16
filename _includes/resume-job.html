@@ -1,0 +1,16 @@
+{% assign job = include.job %}
+<article>
+  <h4>{{ job.org }} <span>· {{ job.location }}</span></h4>
+  <ul class="resume-roles">
+    {% for role in job.roles %}
+    <li><span>{{ role.title }}</span> <span>{{ role.dates }}</span></li>
+    {% endfor %}
+  </ul>
+  {% if job.summary %}<p>{{ job.summary }}</p>{% endif %}
+  {% if job.highlights_label %}<p class="resume-eyebrow">{{ job.highlights_label }}</p>{% endif %}
+  {% if job.highlights %}
+  <ul>
+    {% for item in job.highlights %}<li><strong>{{ item.lead }}:</strong> {{ item.text }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+</article>

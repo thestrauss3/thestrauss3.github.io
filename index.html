@@ -46,15 +46,53 @@ layout: default
 
     <div class="portfolio-section" id="resume">
       <h2>Résumé</h2>
-      <!-- TODO: fill in your roles, then drop a PDF at assets/resume.pdf and link it below. -->
-      <article>
-        <h3>[Most recent role] · [Organization]</h3>
-        <p>[Dates] · [One sentence about what you owned or delivered.]</p>
-      </article>
-      <article>
-        <h3>[Previous role, education, or open-source work]</h3>
-        <p>[Dates] · [One sentence about your contribution or a relevant accomplishment.]</p>
-      </article>
+      {% assign r = site.data.resume %}
+      <p>{{ r.title }} · {{ r.location }}</p>
+      <p class="resume-downloads">
+        <span>Download:</span>
+        <a href="{{ '/assets/resume/Joseph_Strauss_Resume.pdf' | relative_url }}" download>PDF</a>
+        <a href="{{ '/assets/resume/Joseph_Strauss_Resume.docx' | relative_url }}" download>Word (.docx)</a>
+      </p>
+
+      <details class="resume-toggle">
+        <summary><span class="resume-arrow" aria-hidden="true"></span><span class="when-closed">Show full résumé</span><span class="when-open">Hide full résumé</span></summary>
+
+        <div class="resume">
+          <section>
+            <h3>Summary</h3>
+            <p>{{ r.summary }}</p>
+          </section>
+
+          <section>
+            <h3>Technical skills</h3>
+            <dl class="resume-skills">
+              {% for group in r.skills %}
+              <div><dt>{{ group.label }}</dt><dd>{{ group.items }}</dd></div>
+              {% endfor %}
+            </dl>
+          </section>
+
+          <section>
+            <h3>Professional experience</h3>
+            {% for job in r.experience %}{% include resume-job.html job=job %}{% endfor %}
+          </section>
+
+          <section>
+            <h3>Military experience</h3>
+            {% for job in r.military %}{% include resume-job.html job=job %}{% endfor %}
+          </section>
+
+          <section>
+            <h3>Education</h3>
+            {% for school in r.education %}
+            <article>
+              <h4>{{ school.org }} <span>· {{ school.location }}</span></h4>
+              <p>{{ school.detail }} · {{ school.dates }}</p>
+            </article>
+            {% endfor %}
+          </section>
+        </div>
+      </details>
     </div>
 
     <div class="portfolio-section" id="contact">

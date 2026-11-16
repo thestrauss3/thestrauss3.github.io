@@ -52,6 +52,48 @@ h1, h2, p { margin: 0; }
 .project-pair article { margin: 0 !important; }
 .project-pair p + p { margin-top: .55rem; }
 
+/* Résumé */
+.resume-downloads { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1.2rem; margin-top: .4rem; }
+.resume-downloads a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; }
+
+.notes .resume-toggle { margin-top: .6rem; }
+.notes .resume-toggle > summary {
+  list-style: none;
+  display: inline-flex; align-items: center; gap: .6rem;
+  font-size: 1.1rem;
+}
+.resume-toggle > summary::-webkit-details-marker { display: none; }
+.resume-arrow {
+  width: .6em; height: .6em;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform .2s ease;
+}
+.resume-toggle[open] .resume-arrow { transform: rotate(45deg); }
+.resume-toggle .when-open,
+.resume-toggle[open] .when-closed { display: none; }
+.resume-toggle[open] .when-open { display: inline; }
+@media (prefers-reduced-motion: reduce) { .resume-arrow { transition: none; } }
+
+.resume { padding-top: .6rem; }
+.resume section + section { margin-top: 1.6rem; }
+.resume h3 { text-transform: uppercase; letter-spacing: .06em; font-size: .9rem; }
+.resume h4 { margin: 0 0 .3rem; font-size: 1.05rem; }
+.resume h4 span { font-weight: 400; }
+.resume article + article { margin-top: 1.2rem; }
+.resume .resume-roles + p { margin-top: .4rem; }
+.resume ul { margin: .4rem 0 0; padding-left: 1.2rem; max-width: 43rem; }
+.resume li + li { margin-top: .4rem; }
+.resume .resume-roles { list-style: none; padding: 0; }
+.resume .resume-roles li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 1rem; margin: 0; }
+.resume .resume-roles li span:last-child { color: #5b5276; font-variant-numeric: tabular-nums; }
+.resume-eyebrow { margin-top: .8rem !important; font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #5b5276; }
+.resume-skills { margin: 0; max-width: 43rem; }
+.resume-skills div + div { margin-top: .3rem; }
+.resume-skills dt { display: inline; font-weight: 600; }
+.resume-skills dt::after { content: ":"; }
+.resume-skills dd { display: inline; margin: 0 0 0 .3rem; }
+
 .contact-links { display: flex; flex-wrap: wrap; gap: .25rem 1.2rem; margin: .4rem 0 0; }
 
 @media (max-width: 42rem) {

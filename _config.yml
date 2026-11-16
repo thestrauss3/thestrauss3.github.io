@@ -5,9 +5,9 @@ author:
   name: Joseph Strauss
   role: Full-stack software engineer
   github: thestrauss3
-  # Fill these in to show the links under Contact:
-  email:
-  linkedin:   # full URL, e.g. https://www.linkedin.com/in/your-handle
+  # Shown as links under Contact (same details as the public résumé):
+  email: joseph.strauss.mail@gmail.com
+  linkedin: https://www.linkedin.com/in/joseph-strauss
 
 # Dev files that shouldn't be published as part of the site
 exclude:
