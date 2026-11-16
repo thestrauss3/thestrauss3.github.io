@@ -1,0 +1,68 @@
+# Rendered in the Résumé section of index.html.
+# Keep in sync with assets/resume/Joseph_Strauss_Resume.{pdf,docx}
+# (public copies, sourced from ../assets/Resume/Public; no phone number).
+
+title: Senior Full-Stack Software Engineer
+location: San Diego, CA
+
+summary: >-
+  Senior full-stack software engineer with 9 years building Angular and .NET SaaS
+  applications. Search subject-matter expert with experience improving developer
+  tooling and piloting AI-assisted development.
+
+skills:
+  - label: Frontend
+    items: Angular, AngularJS, TypeScript, JavaScript, RxJS, Storybook, SCSS
+  - label: Backend
+    items: C#, .NET, REST APIs, SQL Server, Dapper, OpenSearch, Elasticsearch
+  - label: AI and delivery
+    items: Claude Code, GitHub Copilot, Git, TeamCity, AWS, Docker; Jest, NUnit
+
+experience:
+  - org: Buildium, a RealPage company
+    location: Remote
+    roles:
+      - title: Senior Software Engineer
+        dates: Oct 2025 – Jul 2026
+      - title: Software Engineer
+        dates: Sep 2020 – Oct 2025
+      - title: Junior Software Engineer
+        dates: Mar 2018 – Sep 2020
+      - title: Software Engineering Intern
+        dates: Sep 2017 – Mar 2018
+    highlights_label: Selected accomplishments across tenure
+    highlights:
+      - lead: Cut 30+ second load times
+        text: Reduced recipient-search loads to under one second for accounts with 30,000+ recipients by rebuilding search end to end with OpenSearch.
+      - lead: One-day developer setup
+        text: Helped cut machine setup from about a week to one day through the Dev Setup Guild's platform standards, diagnostic tools, and idempotent setup commands.
+      - lead: ~30% higher team throughput
+        text: Adopted Claude Code for 100% of coding work, directing research and plans, reviewing code, and validating behavior; the team increased story points completed per sprint after ramp-up.
+      - lead: AI tooling evaluation
+        text: Participated in a two-team AI pilot's first three months on its only Claude Code team; shared Claude Code and Copilot findings to inform company adoption guidance.
+      - lead: Search SME & technical guidance
+        text: Advised engineers across the organization on Elasticsearch/OpenSearch and wrote technical documentation used to extend search capabilities.
+      - lead: 5x search usage
+        text: Expanded Global Search with Elasticsearch documents and relevance tuning; completed-search volume reached approximately 5x its prior level over six months.
+      - lead: Event-driven automation
+        text: Built event triggers and queues connecting a monolith to a workflow microservice, supporting conditional email, SMS, task, and maintenance-project automation.
+      - lead: Cross-page email drafting
+        text: Rebuilt composer state management in a hybrid Angular/AngularJS application, enabling seamless drafting across both frameworks and preventing cross-draft updates for a feature customers had requested for years.
+      - lead: $1M+ new MRR
+        text: Contributed Resident Center UI development alongside a payment-system overhaul; the combined initiative generated $1M+ in new monthly recurring revenue.
+      - lead: Reusable UI
+        text: Built and documented 20+ reusable Angular components in Storybook, standardizing application styling and reducing repetitive CSS verification in code reviews.
+
+military:
+  - org: United States Marine Corps Reserve
+    location: Devens, MA
+    roles:
+      - title: Cyber Network Operator, Lance Corporal
+        dates: Nov 2015 – Jan 2020
+    summary: Configured secure networks and virtualized environments; trained Marines in IT security and communications protocols.
+
+education:
+  - org: Launch Academy
+    location: Boston, MA
+    detail: Full-Stack Web Development Bootcamp
+    dates: "2017"
