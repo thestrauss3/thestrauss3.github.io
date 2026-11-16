@@ -1,0 +1,7 @@
+# Store text files with LF and check them out as LF on every OS,
+# regardless of each machine's core.autocrlf setting.
+* text=auto eol=lf
+
+# Windows-only scripts need CRLF
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
