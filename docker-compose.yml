@@ -1,0 +1,16 @@
+# Local preview of the site, run inside Docker.
+# Start:  docker compose up      then open http://localhost:4000
+# Stop:   Ctrl+C  (or `docker compose down`)
+services:
+  jekyll:
+    image: ruby:3.3
+    working_dir: /srv/jekyll
+    command: sh -c "bundle install && bundle exec jekyll serve --host 0.0.0.0 --force_polling"
+    ports:
+      - "4000:4000"
+    volumes:
+      - .:/srv/jekyll
+      - gems:/usr/local/bundle
+
+volumes:
+  gems:

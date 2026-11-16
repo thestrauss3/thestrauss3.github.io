@@ -8,3 +8,9 @@ author:
   # Fill these in to show the links under Contact:
   email:
   linkedin:   # full URL, e.g. https://www.linkedin.com/in/your-handle
+
+# Dev files that shouldn't be published as part of the site
+exclude:
+  - docker-compose.yml
+  - Gemfile
+  - Gemfile.lock
