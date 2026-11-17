@@ -88,6 +88,11 @@ h1, h2, p { margin: 0; }
 .portfolio-section h2 { margin-bottom: .65rem; font-size: clamp(1.45rem, 4vw, 2rem); }
 .portfolio-section p { max-width: 43rem; }
 #about p + p { margin-top: 1rem; }
+/* Large screens: heading on top, text | photo below it */
+#about { display: grid; grid-template-columns: minmax(0, 43rem) 200px; column-gap: 3rem; align-items: start; }
+#about h2 { grid-column: 1 / -1; grid-row: 1; }
+#about .about-text { grid-column: 1; grid-row: 2; }
+.about-photo { grid-column: 2; grid-row: 2; display: block; width: 200px; height: 200px; border-radius: 50%; object-fit: cover; }
 .portfolio-section h3 { margin: 0 0 .35rem; font-size: 1.1rem; }
 .portfolio-section article + article,
 .portfolio-section article + p { margin-top: 1.2rem; }
@@ -142,7 +147,12 @@ h1, h2, p { margin: 0; }
 
 @media (max-width: 42rem) {
   .notes .wrap { grid-template-columns: minmax(0, 1fr); }
+  /* Small screens: photo floats right, its top level with the "About" heading */
+  #about { display: block; }
+  #about::after { content: ""; display: table; clear: both; }
+  .about-photo { float: right; margin: 0 0 .75rem 1.25rem; }
 }
 @media (max-width: 34rem) {
+  .about-photo { width: 160px; height: 160px; }
   .project-pair { grid-template-columns: 1fr; }
 }
