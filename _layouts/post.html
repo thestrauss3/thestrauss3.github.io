@@ -3,8 +3,6 @@ layout: default
 ---
 {%- assign has_title = false -%}
 {%- if page.title and page.title != "" -%}{%- assign has_title = true -%}{%- endif -%}
-{%- assign from_linkedin = false -%}
-{%- if page.source == "linkedin" -%}{%- assign from_linkedin = true -%}{%- endif -%}
 <section class="notes post-page" aria-labelledby="post-title">
   <div class="wrap wrap-single">
     <nav class="page-nav" aria-label="Site">
@@ -18,24 +16,9 @@ layout: default
       {%- else %}
       <h1 id="post-title" class="visually-hidden">Post from {{ page.date | date: "%B %-d, %Y" }}</h1>
       {%- endif %}
-      <p class="post-meta">{% if from_linkedin %}LinkedIn{% else %}Blog{% endif %} · <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%b %-d, %Y" }}</time></p>
+      <p class="post-meta"><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%b %-d, %Y" }}</time></p>
       <div class="post-body">
-        {%- if from_linkedin %}
-        {%- comment -%} Imported text is plain text: escape it, keep its paragraphs and line breaks. {%- endcomment -%}
-        {%- capture nl %}
-{% endcapture -%}
-        {%- assign paragraphs = page.text | default: page.summary | escape | split: nl | join: "<br>" | split: "<br><br>" -%}
-        {%- for para in paragraphs %}
-        {%- assign para = para | strip -%}
-        {%- assign lead = para | slice: 0, 4 -%}
-        {%- if lead == "<br>" -%}{%- assign para = para | remove_first: "<br>" -%}{%- endif -%}
-        {%- if para != "" %}
-        <p>{{ para }}</p>
-        {%- endif %}
-        {%- endfor %}
-        {%- else %}
         {{ content }}
-        {%- endif %}
       </div>
       {%- assign media_count = 0 -%}
       {%- for m in page.media -%}{%- if m.file and m.file != "" -%}{%- assign media_count = media_count | plus: 1 -%}{%- endif -%}{%- endfor -%}
@@ -53,13 +36,11 @@ layout: default
         {%- endfor %}
       </div>
       {%- endif %}
+      {%- if page.links %}
       <p class="post-links">
-        {%- if page.linkedin_url and page.linkedin_url != "" %}
-        <a target="_blank" rel="noopener" href="{{ page.linkedin_url }}">{% if from_linkedin %}View on LinkedIn{% else %}Discuss on LinkedIn{% endif %} →<span class="visually-hidden"> (opens in a new tab)</span></a>
-        {%- else %}
-        <a target="_blank" rel="noopener" hidden data-discuss="{{ page.slug }}">Discuss on LinkedIn →<span class="visually-hidden"> (opens in a new tab)</span></a>
-        {%- endif %}
+        {% include post-platform-links.html links=page.links %}
       </p>
+      {%- endif %}
     </article>
   </div>
 </section>

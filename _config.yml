@@ -11,32 +11,21 @@ author:
   email: joseph.strauss.mail@gmail.com
   linkedin: https://www.linkedin.com/in/joseph-strauss
 
-# Posts written on this site live in _posts/ (drafts in _drafts/, which never
-# publish). Posts imported from LinkedIn live in _linkedin/; each gets a page
-# showing its full text. See docs/posts.md.
+# Posts live in _posts/ as YYYY-MM-DD-slug.md (drafts in _drafts/, which never
+# publish). Each gets a page at /posts/YYYY/MM/DD/slug/. See docs/posts.md.
 collections:
   posts:
     output: true
-    permalink: /posts/:title/
-  linkedin:
-    output: true
-    permalink: /posts/linkedin/:name/
+    permalink: /posts/:year/:month/:day/:title/
 
 defaults:
   - scope:
       type: posts
     values:
       layout: post
-  - scope:
-      type: linkedin
-    values:
-      layout: post
 
 posts_archive:
   batch_size: 10
-  # Branch where the LinkedIn publishing workflow records each share. The
-  # browser reads it to show "Discuss on LinkedIn" links on site posts.
-  syndication_state_url: https://raw.githubusercontent.com/thestrauss3/thestrauss3.github.io/linkedin-syndication/state.json
 
 # Dev files that shouldn't be published as part of the site
 exclude:

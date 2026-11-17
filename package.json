@@ -1,13 +1,11 @@
 {
   "name": "josephstrauss-dev-tools",
   "private": true,
-  "description": "Local and CI tooling for the posts section. The site itself is built by GitHub Pages (Jekyll).",
+  "description": "Local tooling for the posts section. The site itself is built by GitHub Pages (Jekyll).",
   "type": "module",
   "engines": { "node": ">=20" },
   "scripts": {
-    "import-linkedin": "node scripts/import-linkedin.mjs",
-    "linkedin-auth": "node scripts/linkedin-auth.mjs",
-    "syndicate": "node scripts/syndicate.mjs",
+    "add-linkedin-post": "node scripts/add-linkedin-post.mjs",
     "test": "node --test scripts/test/"
   }
 }

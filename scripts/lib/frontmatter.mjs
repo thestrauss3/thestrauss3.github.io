@@ -1,47 +1,48 @@
 // Small reader/writer for the YAML front matter used by posts.
 // Supports `key: value` lines with plain, "double-quoted" (JSON-style) or
-// 'single-quoted' values, true/false, and one level of nesting: a list of
-// flat items (used for `media`), written as
+// 'single-quoted' values, true/false, and one level of nesting under a bare
+// `key:` line: either a map (used for `links`) or a list of flat items (used
+// for `media`):
 //
+//   links:
+//     linkedin: "https://..."
 //   media:
 //     - type: "image"
 //       file: ""
 //
 // Anything more complex isn't supported.
 
+const KEY = "([A-Za-z0-9_-]+)";
+
 export function parseFrontMatter(source) {
   const text = source.replace(/^﻿/, "").replace(/\r\n/g, "\n");
   const m = /^---\n([\s\S]*?)\n---[ \t]*(?:\n|$)/.exec(text);
   if (!m) return { data: {}, body: text };
   const data = {};
-  let list = null; // the list currently being filled
-  const bare = new Set(); // keys written as a bare `key:`
+  let parent = null; // key of the bare `key:` line being filled
   for (const line of m[1].split("\n")) {
-    const kv = /^([A-Za-z0-9_-]+):(?:\s+(.*))?$/.exec(line);
-    if (kv) {
-      const raw = (kv[2] ?? "").trim();
-      if (raw === "") {
-        list = data[kv[1]] = [];
-        bare.add(kv[1]);
-      } else {
-        list = null;
-        data[kv[1]] = parseValue(raw);
-      }
-      continue;
+    let r;
+    if ((r = new RegExp(`^${KEY}:(?:\\s+(.*))?$`).exec(line))) {
+      const raw = (r[2] ?? "").trim();
+      if (raw === "") { parent = r[1]; data[parent] = null; }
+      else { parent = null; data[r[1]] = parseValue(raw); }
+    } else if (parent && (r = new RegExp(`^\\s+-\\s+${KEY}:(?:\\s+(.*))?$`).exec(line))) {
+      if (!Array.isArray(data[parent])) data[parent] = [];
+      data[parent].push({ [r[1]]: parseValue((r[2] ?? "").trim()) });
+    } else if (parent && (r = new RegExp(`^\\s+${KEY}:(?:\\s+(.*))?$`).exec(line))) {
+      const value = parseValue((r[2] ?? "").trim());
+      const cur = data[parent];
+      if (Array.isArray(cur) && cur.length) cur[cur.length - 1][r[1]] = value;
+      else if (!Array.isArray(cur)) data[parent] = { ...(cur ?? {}), [r[1]]: value };
     }
-    const item = /^\s+-\s+([A-Za-z0-9_-]+):(?:\s+(.*))?$/.exec(line);
-    if (item && list) { list.push({ [item[1]]: parseValue((item[2] ?? "").trim()) }); continue; }
-    const field = /^\s+([A-Za-z0-9_-]+):(?:\s+(.*))?$/.exec(line);
-    if (field && list?.length) list[list.length - 1][field[1]] = parseValue((field[2] ?? "").trim());
   }
-  // A bare `key:` with nothing under it is an empty value, not a list.
-  for (const k of bare) if (!data[k].length) data[k] = null;
   return { data, body: text.slice(m[0].length) };
 }
 
 function parseValue(raw) {
   if (raw === "" || raw === "~" || raw === "null") return null;
   if (raw === "[]") return [];
+  if (raw === "{}") return {};
   if (raw.startsWith('"')) {
     const end = findClosingQuote(raw);
     try { return JSON.parse(raw.slice(0, end + 1)); } catch { return raw.slice(1, end); }
@@ -74,6 +75,11 @@ export function stringifyFrontMatter(data, body = "") {
       for (const item of v) {
         Object.entries(item).forEach(([ik, iv], i) => lines.push(`${i ? "    " : "  - "}${ik}: ${formatValue(iv)}`));
       }
+    } else if (v && typeof v === "object") {
+      const entries = Object.entries(v);
+      if (!entries.length) { lines.push(`${k}: {}`); continue; }
+      lines.push(`${k}:`);
+      for (const [ik, iv] of entries) lines.push(`  ${ik}: ${formatValue(iv)}`);
     } else {
       lines.push(`${k}: ${formatValue(v)}`);
     }

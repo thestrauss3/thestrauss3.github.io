@@ -1,46 +1,8 @@
-// Posts: "All posts" archive loading and "Discuss on LinkedIn" links.
-// The page works without this script: the archive shows its first batch and
-// every post keeps its own links.
+// "All posts" archive: loads older posts as the reader scrolls, with a
+// "Load more" button as fallback. Without this script the archive still shows
+// its first batch.
 (function () {
   "use strict";
-
-  var script = document.currentScript;
-  var syndicationUrl = script && script.getAttribute("data-syndication-url");
-
-  // --- "Discuss on LinkedIn" -------------------------------------------------
-  // Site posts are cross-posted by a GitHub Actions job, which records each
-  // share on a separate branch. Show the link only for shares it verified.
-  var syndication = null;
-
-  function loadSyndication() {
-    if (!syndication) {
-      syndication = !syndicationUrl
-        ? Promise.resolve({})
-        : fetch(syndicationUrl, { cache: "no-cache" })
-            .then(function (r) { return r.ok ? r.json() : {}; })
-            .then(function (state) { return (state && state.posts) || {}; })
-            .catch(function () { return {}; });
-    }
-    return syndication;
-  }
-
-  function isLinkedInPermalink(url) {
-    return /^https:\/\/www\.linkedin\.com\/feed\/update\/urn:li:(share|ugcPost|activity):\d+\/?$/.test(url || "");
-  }
-
-  function fillDiscussLinks(root) {
-    var links = (root || document).querySelectorAll("a[data-discuss][hidden]");
-    if (!links.length) return;
-    loadSyndication().then(function (posts) {
-      links.forEach(function (a) {
-        var share = posts[a.getAttribute("data-discuss")];
-        if (share && share.status === "posted" && share.permalink_verified && isLinkedInPermalink(share.linkedin_url)) {
-          a.href = share.linkedin_url;
-          a.hidden = false;
-        }
-      });
-    });
-  }
 
   // --- "All posts" archive ---------------------------------------------------
   function initArchive() {
@@ -111,7 +73,6 @@
           if (!firstNew) firstNew = item;
           list.appendChild(item);
         });
-        fillDiscussLinks(list);
         if (live) live.textContent = next.length ? "Loaded " + next.length + " more posts." : "";
 
         // Keyboard users who pressed the button continue at the first new post.
@@ -151,7 +112,6 @@
   }
 
   function start() {
-    fillDiscussLinks(document);
     initArchive();
   }
 

@@ -1,0 +1,17 @@
+{%- comment -%}
+  "View on LinkedIn" (etc.) links for a post's `links`, each with its icon.
+  Params: links (the post's links map), describedby (optional element id).
+  Platform names and icons come from _data/platforms.yml.
+{%- endcomment -%}
+{%- for pair in include.links -%}
+  {%- assign key = pair[0] -%}
+  {%- assign href = pair[1] -%}
+  {%- if href and href != "" -%}
+  {%- assign platform = site.data.platforms[key] -%}
+  {%- assign label = platform.label | default: "" -%}
+  {%- if label == "" -%}{%- assign label = key | capitalize -%}{%- endif -%}
+  <a class="platform-link" href="{{ href }}" target="_blank" rel="noopener"{% if include.describedby %} aria-describedby="{{ include.describedby }}"{% endif %}>
+    {%- if platform.icon %}{% include icons/{{ platform.icon }}.svg %}{% endif -%}
+    View on {{ label }} →<span class="visually-hidden"> (opens in a new tab)</span></a>
+  {%- endif -%}
+{%- endfor -%}

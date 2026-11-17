@@ -1,4 +1,4 @@
-// Text helpers shared by the LinkedIn importer and the publishing job.
+// Text helpers for adding posts.
 
 const ABBREVIATIONS = /(?:\b(?:e\.g|i\.e|etc|vs|Mr|Mrs|Ms|Dr|Jr|Sr|St|U\.S|a\.m|p\.m)\.)$/i;
 
@@ -43,7 +43,7 @@ export function truncateWords(text, limit) {
   return (space > limit * 0.6 ? cut.slice(0, space) : cut).replace(/[\s,;:.–—-]+$/, "") + "…";
 }
 
-// LinkedIn exports can contain API-style markup for hashtags and mentions.
+// LinkedIn text can contain API-style markup for hashtags and mentions.
 export function cleanLinkedInText(text) {
   return String(text ?? "")
     .replace(/\r\n?/g, "\n")
@@ -52,43 +52,29 @@ export function cleanLinkedInText(text) {
     .trim();
 }
 
-// Rough Markdown-to-plain-text for the LinkedIn share commentary.
-export function markdownToPlain(md) {
-  return String(md ?? "")
-    .replace(/\r\n?/g, "\n")
-    .replace(/\{%[\s\S]*?%\}|\{\{[\s\S]*?\}\}/g, "")
-    .replace(/```[^\n]*\n([\s\S]*?)```/g, "$1")
-    .replace(/<[^>]+>/g, "")
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
-    .replace(/\[([^\]]+)\]\(([^)\s]+)[^)]*\)/g, "$1 ($2)")
-    .replace(/^#{1,6}\s+/gm, "")
-    .replace(/^>\s?/gm, "")
-    .replace(/^\s*[-*+]\s+/gm, "• ")
-    .replace(/(\*\*|__)(.+?)\1/g, "$2")
-    .replace(/(^|[^\w*])[*_]([^*_\n]+)[*_](?=[^\w*]|$)/g, "$1$2")
-    .replace(/`([^`]+)`/g, "$1")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
-
-export const LINKEDIN_TEXT_LIMIT = 3000;
-
-// Commentary for the LinkedIn share: the whole post when it fits, otherwise
-// an excerpt. The canonical site URL always goes at the end.
-export function buildShareText({ title, body, url, limit = LINKEDIN_TEXT_LIMIT }) {
-  const heading = title ? `${title}\n\n` : "";
-  const full = `${heading}${body}\n\nOriginally posted at ${url}`;
-  if (full.length <= limit) return full;
-  const tail = `\n\nRead the full post: ${url}`;
-  const room = limit - heading.length - tail.length;
-  const paragraphs = body.split(/\n{2,}/);
-  let excerpt = "";
-  for (const p of paragraphs) {
-    const next = excerpt ? `${excerpt}\n\n${p}` : p;
-    if (next.length > room - 4) break; // leave room for the trailing "\n\n…"
-    excerpt = next;
-  }
-  if (!excerpt) excerpt = truncateWords(body.replace(/\s+/g, " "), room - 1);
-  else excerpt += "\n\n…";
-  return `${heading}${excerpt}${tail}`.slice(0, limit);
+// Plain text (as pasted from LinkedIn) to Markdown that renders the same way:
+// paragraphs stay paragraphs, "•" lines become a list, other single line
+// breaks are kept, and characters Markdown or Liquid would interpret are escaped.
+export function textToMarkdown(text) {
+  const BULLET = /^\s*[•·▪‣◦]\s*/;
+  const escapeLine = (line) => line
+    .replace(/^(\s*)([#>+*-])(?=\s|$|#)/, "$1\\$2")
+    .replace(/^(\s*\d+)\.(\s)/, "$1\\.$2");
+  const blocks = String(text ?? "").replace(/\r\n?/g, "\n").trim().split(/\n\s*\n/);
+  const out = blocks.map((block) => {
+    const lines = block.split("\n").map((l) => l.trimEnd());
+    const parts = [];
+    let prose = [];
+    let list = [];
+    const flushProse = () => { if (prose.length) parts.push(prose.map(escapeLine).join("\\\\\n")); prose = []; };
+    const flushList = () => { if (list.length) parts.push(list.map((l) => `- ${l}`).join("\n")); list = []; };
+    for (const line of lines) {
+      if (BULLET.test(line)) { flushProse(); list.push(line.replace(BULLET, "")); }
+      else { flushList(); prose.push(line); }
+    }
+    flushProse();
+    flushList();
+    return parts.join("\n\n");
+  }).join("\n\n");
+  return /\{[{%]/.test(out) ? `{% raw %}\n${out}\n{% endraw %}` : out;
 }

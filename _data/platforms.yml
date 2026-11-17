@@ -1,0 +1,10 @@
+# Other places a post is published. A post lists its copies under `links:`,
+# keyed by these names, and each one gets a "View on <label>" link with its icon.
+# To add a platform: add an entry here and its icon at _includes/icons/<icon>.svg
+# (icons from https://simpleicons.org, CC0).
+linkedin:
+  label: LinkedIn
+  icon: linkedin
+facebook:
+  label: Facebook
+  icon: facebook

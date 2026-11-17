@@ -1,5 +1,5 @@
 {%- comment -%}
-  The one shared post index: posts written on this site plus posts imported
-  from LinkedIn, newest first. Sets `all_posts` for the page that includes it.
+  The one shared post list for "Latest posts" and "All posts", newest first.
+  Sets `all_posts` for the page that includes it.
 {%- endcomment -%}
-{%- assign all_posts = site.posts | concat: site.linkedin | sort: "date" | reverse -%}
+{%- assign all_posts = site.posts -%}

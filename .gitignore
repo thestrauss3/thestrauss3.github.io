@@ -1,11 +1,4 @@
 _site/
 .jekyll-cache/
 node_modules/
-.syndication-state/
 
-# LinkedIn data export: keep it out of the repo (see docs/posts.md)
-*.zip
-Shares.csv
-Basic_LinkedIn_Data*/
-Complete_LinkedIn_DataExport*/
-linkedin-export/

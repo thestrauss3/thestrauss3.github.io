@@ -46,6 +46,7 @@ h1, h2, p { margin: 0; }
 .post-excerpt { margin-top: .3rem !important; overflow-wrap: anywhere; }
 .post-links { display: flex; flex-wrap: wrap; gap: 0 1.2rem; }
 .post-links a, .posts-more a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; }
+.platform-link .icon { width: 1em; height: 1em; margin-right: .45em; flex: none; }
 .posts-more { margin-top: .4rem; }
 .posts-empty { padding: .8rem 0; border-top: 1px solid #aa9ec8; border-bottom: 1px solid #aa9ec8; }
 

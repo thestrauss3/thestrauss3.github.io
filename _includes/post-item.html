@@ -3,33 +3,17 @@
   Params: post, heading (heading tag for titled entries, e.g. "h3").
 {%- endcomment -%}
 {%- assign p = include.post -%}
-{%- if p.source == "linkedin" -%}
-  {%- assign pid = p.linkedin_id -%}
-  {%- assign source = "LinkedIn" -%}
-  {%- assign href = p.url | relative_url -%}
-{%- else -%}
-  {%- assign pid = p.slug -%}
-  {%- assign source = "Blog" -%}
-  {%- assign href = p.url | relative_url -%}
-{%- endif -%}
-{%- assign dom_id = pid | slugify | prepend: "post-" -%}
-<article class="post-item" data-id="{{ pid }}">
+{%- assign href = p.url | relative_url -%}
+{%- assign dom_id = p.id | slugify | prepend: "post-" -%}
+{%- assign meta_id = dom_id | append: "-meta" -%}
+<article class="post-item" data-id="{{ p.id }}">
   {%- if p.title and p.title != "" %}
   <{{ include.heading }} class="post-title"><a href="{{ href }}">{{ p.title | escape }}</a></{{ include.heading }}>
   {%- endif %}
-  <p class="post-meta" id="{{ dom_id }}-meta">{{ source }} · <time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%b %-d, %Y" }}</time></p>
+  <p class="post-meta" id="{{ meta_id }}"><time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%b %-d, %Y" }}</time></p>
   <p class="post-excerpt">{% include post-summary.html post=p %}</p>
   <p class="post-links">
-    {%- if p.source == "linkedin" %}
-    <a href="{{ href }}" aria-describedby="{{ dom_id }}-meta">Read the full post →</a>
-    <a target="_blank" rel="noopener" href="{{ p.linkedin_url }}" aria-describedby="{{ dom_id }}-meta">View on LinkedIn →<span class="visually-hidden"> (opens in a new tab)</span></a>
-    {%- else %}
-    <a href="{{ href }}" aria-describedby="{{ dom_id }}-meta">Read the full post →</a>
-    {%- if p.linkedin_url and p.linkedin_url != "" %}
-    <a target="_blank" rel="noopener" href="{{ p.linkedin_url }}" aria-describedby="{{ dom_id }}-meta">Discuss on LinkedIn →<span class="visually-hidden"> (opens in a new tab)</span></a>
-    {%- else %}
-    <a target="_blank" rel="noopener" hidden data-discuss="{{ pid }}" aria-describedby="{{ dom_id }}-meta">Discuss on LinkedIn →<span class="visually-hidden"> (opens in a new tab)</span></a>
-    {%- endif %}
-    {%- endif %}
+    <a href="{{ href }}" aria-describedby="{{ meta_id }}">Read the full post →</a>
+    {% include post-platform-links.html links=p.links describedby=meta_id %}
   </p>
 </article>
