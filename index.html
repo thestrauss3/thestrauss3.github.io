@@ -31,11 +31,12 @@ layout: default
     </div>
 
     <div class="portfolio-section" id="projects">
-      <h2>Projects behind the notes</h2>
+      <h2>Projects</h2>
       <div class="project-pair">
         {% for project in site.data.projects %}
         <article>
           <h3>{% if project.url %}<a href="{{ project.url }}">{{ project.name }}</a>{% else %}{{ project.name }}{% endif %}</h3>
+          {% if project.status %}<p class="project-status">{{ project.status }}</p>{% endif %}
           <p>{{ project.summary }}</p>
           {% if project.detail %}<p>{{ project.detail }}</p>{% endif %}
         </article>

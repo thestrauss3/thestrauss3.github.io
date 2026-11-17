@@ -100,6 +100,8 @@ h1, h2, p { margin: 0; }
 .project-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
 .project-pair article { margin: 0 !important; }
 .project-pair p + p { margin-top: .55rem; }
+.project-status { font-size: .9rem; color: #5b5276; }
+.project-pair .project-status + p { margin-top: .2rem; }
 
 /* Résumé */
 .resume-downloads { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1.2rem; margin-top: .4rem; }
