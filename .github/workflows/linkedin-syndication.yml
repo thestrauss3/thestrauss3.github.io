@@ -1,0 +1,76 @@
+# Shares each newly published site post (_posts/ on master) to Joe's LinkedIn
+# profile once its page is live. GitHub Pages builds and deploys the site on
+# its own, so a LinkedIn failure never blocks the website.
+#
+# Share records live on the `linkedin-syndication` branch (state.json), not on
+# master, so this job never needs to push to the protected branch.
+# Setup, token renewal and recovery steps: docs/posts.md
+name: Share new posts on LinkedIn
+
+on:
+  push:
+    branches: [master]
+    paths: ["_posts/**"]
+  schedule:
+    # Daily: picks up posts left pending (slow deploy, expired token, rate limit).
+    - cron: "23 16 * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "process = share anything pending. retry / record / skip = fix one post (see docs/posts.md)"
+        type: choice
+        options: [process, retry, record, skip]
+        default: process
+      post:
+        description: "Post slug (file name without the date or .md), for retry / record / skip"
+        type: string
+        required: false
+      linkedin_url:
+        description: "For record: the LinkedIn post URL that already exists"
+        type: string
+        required: false
+
+# One run at a time, never cancelled midway, so shares can't overlap.
+concurrency:
+  group: linkedin-syndication
+  cancel-in-progress: false
+
+permissions:
+  contents: write # push state.json to the linkedin-syndication branch
+
+jobs:
+  share:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check out the share records
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin linkedin-syndication >/dev/null; then
+            git fetch --depth=1 origin linkedin-syndication
+            git worktree add -B linkedin-syndication .syndication-state origin/linkedin-syndication
+          else
+            git worktree add --orphan -b linkedin-syndication .syndication-state
+          fi
+
+      - name: Share pending posts
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_AUTHOR_URN: ${{ vars.LINKEDIN_AUTHOR_URN }}
+          LINKEDIN_TOKEN_EXPIRES_AT: ${{ vars.LINKEDIN_TOKEN_EXPIRES_AT }}
+          SITE_URL: https://josephstrauss.dev
+          # Posts dated before this were never meant for cross-posting (backfill).
+          SHARE_POSTS_SINCE: "2026-11-16"
+          MODE: ${{ inputs.mode || 'process' }}
+          POST_SLUG: ${{ inputs.post }}
+          LINKEDIN_URL: ${{ inputs.linkedin_url }}
+        run: node scripts/syndicate.mjs --state-dir .syndication-state

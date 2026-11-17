@@ -1,0 +1,41 @@
+---
+layout: default
+title: All posts
+permalink: /posts/
+---
+{% include posts-all.html %}
+{% assign batch = site.posts_archive.batch_size | default: 10 %}
+<section class="notes archive" aria-labelledby="archive-title">
+  <div class="wrap wrap-single">
+    <nav class="page-nav" aria-label="Site">
+      <a href="{{ '/' | relative_url }}">← {{ site.author.name }}</a>
+    </nav>
+
+    <h1 id="archive-title">All posts</h1>
+
+    {% if all_posts.size == 0 %}
+    <p class="posts-empty">No posts yet.</p>
+    {% else %}
+    <div class="post-list" id="post-list">
+      {% for post in all_posts limit: batch %}{% include post-item.html post=post heading="h2" %}{% endfor %}
+    </div>
+
+    <div class="archive-status">
+      <p class="archive-live" role="status" aria-live="polite"></p>
+      {% if all_posts.size > batch %}
+      <div id="archive-loader"
+           data-index-url="{{ '/posts/index.json' | relative_url }}"
+           data-batch-size="{{ batch }}"
+           data-total="{{ all_posts.size }}">
+        <button type="button" class="archive-button" data-action="more" hidden>Load more</button>
+        <p class="archive-error" hidden>Older posts didn’t load. <button type="button" class="archive-button" data-action="retry">Retry</button></p>
+        <noscript><p>Turn on JavaScript to load older posts.</p></noscript>
+      </div>
+      <p class="archive-end" hidden>You’ve reached the end.</p>
+      {% else %}
+      <p class="archive-end">You’ve reached the end.</p>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>

@@ -1,0 +1,23 @@
+---
+layout: null
+permalink: /posts/index.json
+---
+{%- include posts-all.html -%}
+{
+  "total": {{ all_posts.size }},
+  "posts": [
+    {%- for post in all_posts -%}
+    {%- capture html -%}{% include post-item.html post=post heading="h2" %}{%- endcapture -%}
+    {%- if post.source == "linkedin" -%}{%- assign pid = post.linkedin_id -%}{%- else -%}{%- assign pid = post.slug -%}{%- endif %}
+    {
+      "id": {{ pid | jsonify }},
+      "source": {{ post.source | default: "site" | jsonify }},
+      "date": {{ post.date | date_to_xmlschema | jsonify }},
+      "title": {% if post.title and post.title != "" %}{{ post.title | jsonify }}{% else %}null{% endif %},
+      "url": {% if post.source == "linkedin" %}{{ post.linkedin_url | jsonify }}{% else %}{{ post.url | absolute_url | jsonify }}{% endif %},
+      "linkedin_url": {{ post.linkedin_url | jsonify }},
+      "html": {{ html | strip | jsonify }}
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor %}
+  ]
+}

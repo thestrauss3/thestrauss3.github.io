@@ -1,0 +1,34 @@
+{%- comment -%}
+  One entry in "Latest posts" (homepage) and "All posts" (archive).
+  Params: post, heading (heading tag for titled entries, e.g. "h3").
+{%- endcomment -%}
+{%- assign p = include.post -%}
+{%- if p.source == "linkedin" -%}
+  {%- assign pid = p.linkedin_id -%}
+  {%- assign source = "LinkedIn" -%}
+  {%- assign href = p.linkedin_url -%}
+{%- else -%}
+  {%- assign pid = p.slug -%}
+  {%- assign source = "Blog" -%}
+  {%- assign href = p.url | relative_url -%}
+{%- endif -%}
+{%- assign dom_id = pid | slugify | prepend: "post-" -%}
+<article class="post-item" data-id="{{ pid }}">
+  {%- if p.title and p.title != "" %}
+  <{{ include.heading }} class="post-title"><a href="{{ href }}">{{ p.title | escape }}</a></{{ include.heading }}>
+  {%- endif %}
+  <p class="post-meta" id="{{ dom_id }}-meta">{{ source }} · <time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%b %-d, %Y" }}</time></p>
+  <p class="post-excerpt">{% include post-summary.html post=p %}</p>
+  <p class="post-links">
+    {%- if p.source == "linkedin" %}
+    <a href="{{ href }}" aria-describedby="{{ dom_id }}-meta">Read more on LinkedIn →</a>
+    {%- else %}
+    <a href="{{ href }}" aria-describedby="{{ dom_id }}-meta">Read the full post →</a>
+    {%- if p.linkedin_url and p.linkedin_url != "" %}
+    <a href="{{ p.linkedin_url }}" aria-describedby="{{ dom_id }}-meta">Discuss on LinkedIn →</a>
+    {%- else %}
+    <a hidden data-discuss="{{ pid }}" aria-describedby="{{ dom_id }}-meta">Discuss on LinkedIn →</a>
+    {%- endif %}
+    {%- endif %}
+  </p>
+</article>

@@ -1,0 +1,32 @@
+---
+layout: default
+---
+{%- assign has_title = false -%}
+{%- if page.title and page.title != "" -%}{%- assign has_title = true -%}{%- endif -%}
+<section class="notes post-page" aria-labelledby="post-title">
+  <div class="wrap wrap-single">
+    <nav class="page-nav" aria-label="Site">
+      <a href="{{ '/' | relative_url }}">← {{ site.author.name }}</a>
+      <a href="{{ '/posts/' | relative_url }}">All posts</a>
+    </nav>
+
+    <article class="post-full">
+      {%- if has_title %}
+      <h1 id="post-title">{{ page.title | escape }}</h1>
+      {%- else %}
+      <h1 id="post-title" class="visually-hidden">Post from {{ page.date | date: "%B %-d, %Y" }}</h1>
+      {%- endif %}
+      <p class="post-meta">Blog · <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%b %-d, %Y" }}</time></p>
+      <div class="post-body">
+        {{ content }}
+      </div>
+      <p class="post-links">
+        {%- if page.linkedin_url and page.linkedin_url != "" %}
+        <a href="{{ page.linkedin_url }}">Discuss on LinkedIn →</a>
+        {%- else %}
+        <a hidden data-discuss="{{ page.slug }}">Discuss on LinkedIn →</a>
+        {%- endif %}
+      </p>
+    </article>
+  </div>
+</section>

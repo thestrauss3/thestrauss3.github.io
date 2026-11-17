@@ -1,0 +1,21 @@
+{%- comment -%}
+  Prints the first one or two complete sentences of a post.
+  Uses the post's `summary` front matter when set. Otherwise, for posts written
+  here, it falls back to the first paragraph of the post.
+{%- endcomment -%}
+{%- capture nl %}
+{% endcapture -%}
+{%- assign p = include.post -%}
+{%- if p.summary and p.summary != "" -%}
+  {%- assign text = p.summary | escape -%}
+{%- else -%}
+  {%- assign text = p.excerpt | strip_html -%}
+{%- endif -%}
+{%- assign text = text | replace: nl, " " | replace: "  ", " " | strip -%}
+{%- assign sentences = text | replace: ". ", ".§" | replace: "? ", "?§" | replace: "! ", "!§" | split: "§" -%}
+{%- assign out = sentences[0] -%}
+{%- if sentences.size > 1 and out.size < 140 -%}
+  {%- assign out = out | append: " " | append: sentences[1] -%}
+{%- endif -%}
+{%- if out.size > 320 -%}{%- assign out = out | truncate: 300 -%}{%- endif -%}
+{{- out -}}
