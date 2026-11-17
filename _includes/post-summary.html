@@ -1,0 +1,10 @@
+{%- comment -%}
+  A post's summary for the lists and its page description: its `summary`
+  front matter, exactly as written. `summary` is required: a post without one
+  stops the build with "Could not locate the included file
+  'post-summary-is-required/<the post's file>'".
+{%- endcomment -%}
+{%- assign p = include.post -%}
+{%- assign s = p.summary | strip -%}
+{%- if s == "" -%}{%- include post-summary-is-required/{{ p.path }} -%}{%- endif -%}
+{{- s | escape -}}

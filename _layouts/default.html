@@ -3,12 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+  <title>{% if page.title and page.title != "" %}{{ page.title | escape }} | {% elsif page.collection == "posts" %}Post from {{ page.date | date: "%b %-d, %Y" }} | {% endif %}{{ site.title }}</title>
+  {%- if page.collection == "posts" %}
+  {%- capture post_desc %}{% include post-summary.html post=page %}{% endcapture %}
+  <meta name="description" content="{{ post_desc | strip_html | strip }}">
+  {%- else %}
   <meta name="description" content="{{ page.description | default: site.description }}">
+  {%- endif %}
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Text&display=swap">
   <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
+  {%- if page.scripts %}
+  {%- for script in page.scripts %}
+  <script src="{{ script | relative_url }}" defer></script>
+  {%- endfor %}
+  {%- endif %}
 </head>
 <body>
   <main>

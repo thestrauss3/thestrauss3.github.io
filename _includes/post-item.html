@@ -1,0 +1,19 @@
+{%- comment -%}
+  One entry in "Latest posts" (homepage) and "All posts" (archive).
+  Params: post, heading (heading tag for titled entries, e.g. "h3").
+{%- endcomment -%}
+{%- assign p = include.post -%}
+{%- assign href = p.url | relative_url -%}
+{%- assign dom_id = p.id | slugify | prepend: "post-" -%}
+{%- assign meta_id = dom_id | append: "-meta" -%}
+<article class="post-item" data-id="{{ p.id }}">
+  {%- if p.title and p.title != "" %}
+  <{{ include.heading }} class="post-title"><a href="{{ href }}">{{ p.title | escape }}</a></{{ include.heading }}>
+  {%- endif %}
+  <p class="post-meta" id="{{ meta_id }}"><time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%b %-d, %Y" }}</time></p>
+  <p class="post-excerpt">{% include post-summary.html post=p %}</p>
+  <p class="post-links">
+    <a href="{{ href }}" aria-describedby="{{ meta_id }}">Read the full post →</a>
+    {% include post-platform-links.html links=p.links describedby=meta_id %}
+  </p>
+</article>

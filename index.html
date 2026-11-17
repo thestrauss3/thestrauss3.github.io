@@ -16,14 +16,18 @@ layout: default
       <p>I build web apps with Angular and .NET and specialize in search. I write about what I build, why I built it that way, and what I learn along the way.</p>
     </aside>
 
-    <div>
-      <h2>Engineering notes</h2>
-      {% for note in site.data.notes %}
-      <details{% if forloop.first %} open{% endif %}>
-        <summary>{{ note.title }}</summary>
-        <p>{{ note.body }}</p>
-      </details>
-      {% endfor %}
+    <div class="latest-posts">
+      <h2 id="latest-posts">Latest posts</h2>
+      {% if site.posts.size == 0 %}
+      <p class="posts-empty">No posts yet.</p>
+      {% else %}
+      <div class="post-list">
+        {% for post in site.posts limit: 3 %}{% include post-item.html post=post heading="h3" %}{% endfor %}
+      </div>
+      {% if site.posts.size > 3 %}
+      <p class="posts-more"><a href="{{ '/posts/' | relative_url }}">Show all posts</a></p>
+      {% endif %}
+      {% endif %}
     </div>
 
     <div class="portfolio-section" id="projects">

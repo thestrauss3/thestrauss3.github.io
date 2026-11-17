@@ -1,0 +1,11 @@
+{
+  "name": "josephstrauss-dev-tools",
+  "private": true,
+  "description": "Local tooling for the posts section. The site itself is built by GitHub Pages (Jekyll).",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "add-linkedin-post": "node scripts/add-linkedin-post.mjs",
+    "test": "node --test scripts/test/"
+  }
+}

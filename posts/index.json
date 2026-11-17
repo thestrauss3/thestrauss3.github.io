@@ -1,0 +1,16 @@
+---
+layout: null
+permalink: /posts/index.json
+---
+{%- comment -%}
+  Every post, newest first, for the "All posts" page's "Load more"
+  (assets/js/posts.js): `id` to skip posts already shown, `html` to add.
+{%- endcomment -%}
+{
+  "posts": [
+    {%- for post in site.posts -%}
+    {%- capture html -%}{% include post-item.html post=post heading="h2" %}{%- endcapture %}
+    { "id": {{ post.id | jsonify }}, "html": {{ html | strip | jsonify }} }{% unless forloop.last %},{% endunless %}
+    {%- endfor %}
+  ]
+}

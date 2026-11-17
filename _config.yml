@@ -1,5 +1,7 @@
 title: Joseph Strauss
 description: Full-stack software engineer in San Diego building Angular and .NET apps, specializing in search.
+url: https://josephstrauss.dev
+timezone: America/Los_Angeles
 
 author:
   name: Joseph Strauss
@@ -9,8 +11,28 @@ author:
   email: joseph.strauss.mail@gmail.com
   linkedin: https://www.linkedin.com/in/joseph-strauss
 
+# Posts live in _posts/ as YYYY-MM-DD-slug.md (drafts in _drafts/, which never
+# publish). Each gets a page at /posts/YYYY/MM/DD/slug/. See docs/posts.md.
+collections:
+  posts:
+    output: true
+    permalink: /posts/:year/:month/:day/:title/
+
+defaults:
+  - scope:
+      type: posts
+    values:
+      layout: post
+
+posts_archive:
+  batch_size: 10
+
 # Dev files that shouldn't be published as part of the site
 exclude:
   - docker-compose.yml
   - Gemfile
   - Gemfile.lock
+  - package.json
+  - scripts
+  - docs
+  - README.md

@@ -1,0 +1,46 @@
+---
+layout: default
+---
+{%- assign has_title = false -%}
+{%- if page.title and page.title != "" -%}{%- assign has_title = true -%}{%- endif -%}
+<section class="notes post-page" aria-labelledby="post-title">
+  <div class="wrap wrap-single">
+    <nav class="page-nav" aria-label="Site">
+      <a href="{{ '/' | relative_url }}">← {{ site.author.name }}</a>
+      <a href="{{ '/posts/' | relative_url }}">All posts</a>
+    </nav>
+
+    <article class="post-full">
+      {%- if has_title %}
+      <h1 id="post-title">{{ page.title | escape }}</h1>
+      {%- else %}
+      <h1 id="post-title" class="visually-hidden">Post from {{ page.date | date: "%B %-d, %Y" }}</h1>
+      {%- endif %}
+      <p class="post-meta"><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%b %-d, %Y" }}</time></p>
+      <div class="post-body">
+        {{ content }}
+      </div>
+      {%- assign media_count = 0 -%}
+      {%- for m in page.media -%}{%- if m.file and m.file != "" -%}{%- assign media_count = media_count | plus: 1 -%}{%- endif -%}{%- endfor -%}
+      {%- if media_count > 0 %}
+      <div class="post-media">
+        {%- for m in page.media %}
+        {%- unless m.file and m.file != "" %}{% continue %}{% endunless %}
+        <figure>
+          {%- if m.type == "video" %}
+          <video controls preload="metadata" src="{{ m.file | relative_url }}"{% if m.alt and m.alt != "" %} aria-label="{{ m.alt | escape }}"{% endif %}></video>
+          {%- else %}
+          <img src="{{ m.file | relative_url }}" alt="{{ m.alt | escape }}" loading="lazy">
+          {%- endif %}
+        </figure>
+        {%- endfor %}
+      </div>
+      {%- endif %}
+      {%- if page.links %}
+      <p class="post-links">
+        {% include post-platform-links.html links=page.links %}
+      </p>
+      {%- endif %}
+    </article>
+  </div>
+</section>
