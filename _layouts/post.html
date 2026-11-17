@@ -3,6 +3,8 @@ layout: default
 ---
 {%- assign has_title = false -%}
 {%- if page.title and page.title != "" -%}{%- assign has_title = true -%}{%- endif -%}
+{%- assign from_linkedin = false -%}
+{%- if page.source == "linkedin" -%}{%- assign from_linkedin = true -%}{%- endif -%}
 <section class="notes post-page" aria-labelledby="post-title">
   <div class="wrap wrap-single">
     <nav class="page-nav" aria-label="Site">
@@ -16,13 +18,26 @@ layout: default
       {%- else %}
       <h1 id="post-title" class="visually-hidden">Post from {{ page.date | date: "%B %-d, %Y" }}</h1>
       {%- endif %}
-      <p class="post-meta">Blog · <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%b %-d, %Y" }}</time></p>
+      <p class="post-meta">{% if from_linkedin %}LinkedIn{% else %}Blog{% endif %} · <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%b %-d, %Y" }}</time></p>
       <div class="post-body">
+        {%- if from_linkedin %}
+        {%- comment -%} Imported text is plain text: escape it, keep its paragraphs and line breaks. {%- endcomment -%}
+        {%- capture nl %}
+{% endcapture -%}
+        {%- assign paragraphs = page.text | default: page.summary | escape | split: nl | join: "<br>" | split: "<br><br>" -%}
+        {%- for para in paragraphs %}
+        {%- assign para = para | strip -%}
+        {%- if para != "" and para != "<br>" %}
+        <p>{{ para | remove_first: "<br>" }}</p>
+        {%- endif %}
+        {%- endfor %}
+        {%- else %}
         {{ content }}
+        {%- endif %}
       </div>
       <p class="post-links">
         {%- if page.linkedin_url and page.linkedin_url != "" %}
-        <a href="{{ page.linkedin_url }}">Discuss on LinkedIn →</a>
+        <a href="{{ page.linkedin_url }}">{% if from_linkedin %}View on LinkedIn{% else %}Discuss on LinkedIn{% endif %} →</a>
         {%- else %}
         <a hidden data-discuss="{{ page.slug }}">Discuss on LinkedIn →</a>
         {%- endif %}

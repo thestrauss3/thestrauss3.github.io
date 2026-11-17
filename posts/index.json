@@ -14,7 +14,7 @@ permalink: /posts/index.json
       "source": {{ post.source | default: "site" | jsonify }},
       "date": {{ post.date | date_to_xmlschema | jsonify }},
       "title": {% if post.title and post.title != "" %}{{ post.title | jsonify }}{% else %}null{% endif %},
-      "url": {% if post.source == "linkedin" %}{{ post.linkedin_url | jsonify }}{% else %}{{ post.url | absolute_url | jsonify }}{% endif %},
+      "url": {{ post.url | absolute_url | jsonify }},
       "linkedin_url": {{ post.linkedin_url | jsonify }},
       "html": {{ html | strip | jsonify }}
     }{% unless forloop.last %},{% endunless %}

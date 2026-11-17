@@ -7,7 +7,7 @@ The homepage's **Latest posts** (newest three) and the **All posts** archive at
 | --- | --- | --- |
 | `_posts/` | Posts written on this site; each gets a page at `/posts/<slug>/` | Yes, automatically, once |
 | `_drafts/` | Unpublished drafts; never built on the live site | No |
-| `_linkedin/` | Posts imported from your LinkedIn export (list entries only, no page) | Never (already on LinkedIn) |
+| `_linkedin/` | Posts already on LinkedIn; each gets a page at `/posts/linkedin/<id>/` showing its full text | Never (already on LinkedIn) |
 
 `/posts/index.json` is generated from the same list; the archive uses it to
 load older posts as you scroll.
@@ -40,6 +40,17 @@ Optional front matter:
 - `linkedin_url: "https://www.linkedin.com/feed/update/..."` links a post you
   shared by hand. The job won't share it again.
 - `published: false` hides a post without moving it back to `_drafts/`.
+
+## Add a LinkedIn post by hand
+
+```sh
+node scripts/add-linkedin-post.mjs "<post link>" "<full post text>" [--title "Article title"]
+```
+
+Use the link from the post's **⋯ → Copy link to post** (a `lnkd.in` short link
+also works). Paste the whole post (click "…see more" first): the page shows all of
+it, and the lists show its first one or two sentences. The publication date is decoded from the post ID. Adding the same
+post again does nothing, so edit `_linkedin/<file>.md` to change it.
 
 ## Import your LinkedIn posts (one-time, safe to rerun)
 

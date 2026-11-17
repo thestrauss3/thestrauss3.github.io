@@ -84,3 +84,15 @@ test("--dry-run writes nothing", () => {
   runImport({ csvPath: t.csvPath, outDir: t.outDir, dryRun: true, log: () => {} });
   assert.equal(fs.existsSync(t.outDir), false);
 });
+
+test("add-linkedin-post decodes the date from the ID and is safe to rerun", async () => {
+  const { addPost, dateFromUrn } = await import("../add-linkedin-post.mjs");
+  assert.equal(dateFromUrn("urn:li:activity:7487913641938399232").toISOString(), "2026-07-28T16:55:30.946Z");
+  const outDir = fs.mkdtempSync(path.join(os.tmpdir(), "li-add-"));
+  const args = { urn: "urn:li:activity:7487913641938399232", text: "One.\n\nTwo.", outDir };
+  assert.equal(addPost(args).added, true);
+  assert.equal(addPost({ ...args, text: "Changed." }).added, false);
+  const { data } = parseFrontMatter(fs.readFileSync(path.join(outDir, "activity-7487913641938399232.md"), "utf8"));
+  assert.equal(data.date, "2026-07-28 16:55:30 +0000");
+  assert.equal(data.summary, "One. Two.");
+});

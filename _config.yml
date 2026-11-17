@@ -12,18 +12,23 @@ author:
   linkedin: https://www.linkedin.com/in/joseph-strauss
 
 # Posts written on this site live in _posts/ (drafts in _drafts/, which never
-# publish). Posts imported from LinkedIn live in _linkedin/ and only feed the
-# lists; they get no page of their own. See docs/posts.md.
+# publish). Posts imported from LinkedIn live in _linkedin/; each gets a page
+# showing its full text. See docs/posts.md.
 collections:
   posts:
     output: true
     permalink: /posts/:title/
   linkedin:
-    output: false
+    output: true
+    permalink: /posts/linkedin/:name/
 
 defaults:
   - scope:
       type: posts
+    values:
+      layout: post
+  - scope:
+      type: linkedin
     values:
       layout: post
 

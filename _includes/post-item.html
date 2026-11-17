@@ -6,7 +6,7 @@
 {%- if p.source == "linkedin" -%}
   {%- assign pid = p.linkedin_id -%}
   {%- assign source = "LinkedIn" -%}
-  {%- assign href = p.linkedin_url -%}
+  {%- assign href = p.url | relative_url -%}
 {%- else -%}
   {%- assign pid = p.slug -%}
   {%- assign source = "Blog" -%}
@@ -21,7 +21,8 @@
   <p class="post-excerpt">{% include post-summary.html post=p %}</p>
   <p class="post-links">
     {%- if p.source == "linkedin" %}
-    <a href="{{ href }}" aria-describedby="{{ dom_id }}-meta">Read more on LinkedIn →</a>
+    <a href="{{ href }}" aria-describedby="{{ dom_id }}-meta">Read the full post →</a>
+    <a href="{{ p.linkedin_url }}" aria-describedby="{{ dom_id }}-meta">View on LinkedIn →</a>
     {%- else %}
     <a href="{{ href }}" aria-describedby="{{ dom_id }}-meta">Read the full post →</a>
     {%- if p.linkedin_url and p.linkedin_url != "" %}
