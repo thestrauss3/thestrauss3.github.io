@@ -15,6 +15,33 @@
 //              Set each item's `file` once the media is in assets/posts/.
 //
 // Nothing is changed if a post with the same LinkedIn link already exists.
+//
+// RETIRED (Nov 2026): this was used once to backfill the posts in _posts/ and
+// is kept only in case it's needed again. It was never fixed for the issues
+// below. Check them before reusing it (each is marked "Known issue N" below):
+//
+//  1. Link format. Only links containing "urn:li:activity|share|ugcPost:<id>"
+//     are recognized, e.g. linkedin.com/feed/update/urn:li:activity:123/.
+//     LinkedIn's "⋯ → Copy link to post" usually gives
+//     linkedin.com/posts/<user>_<words>-activity-<id>-<hash> instead, which is
+//     rejected. Workaround: build the feed/update link from that <id>. Fix:
+//     also match /activity-(\d+)/ in parseLinkedInUrn.
+//  2. lnkd.in short links. resolveUrn doesn't check the response status, and
+//     if the final URL has no ID it takes the first "urn:li:" anywhere in the
+//     page. A login wall or interstitial page can contain other posts' IDs,
+//     so the post could be saved with the wrong date and link. Workaround: use
+//     the full link, not a lnkd.in one.
+//  3. Duplicates across ID types. The duplicate check compares exact URNs, so
+//     the same post added once by its ugcPost/share URN and once by its
+//     activity URN is saved twice. Workaround: always use the activity link.
+//  4. Duplicate vs. file-name check order. Both are checked file by file in
+//     one loop, so a slug clash in an earlier file throws "already exists"
+//     before the loop reaches the file that already has this post. Fix: check
+//     every file for the URN first, then check the file name.
+//  5. Time zone. siteDay hardcodes America/Los_Angeles instead of reading
+//     `timezone` from _config.yml. If that setting changes, the date in the
+//     file name and the date in the post's URL can differ near midnight.
+//     Fix: read it from _config.yml, or update both together.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -24,6 +51,7 @@ import { cleanLinkedInText, summarize, textToMarkdown } from "./lib/text.mjs";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 // "urn:li:activity:123" etc. from a LinkedIn post link.
+// Known issue 1: misses linkedin.com/posts/...-activity-<id>-... links.
 export function parseLinkedInUrn(link) {
   let decoded = String(link ?? "");
   try { decoded = decodeURIComponent(decoded); } catch { /* keep raw */ }
@@ -44,6 +72,7 @@ export function dateFromUrn(urn) {
 }
 
 // The site's time zone decides which day a post belongs to.
+// Known issue 5: must match `timezone` in _config.yml by hand.
 const siteDay = (d) => d.toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" }); // YYYY-MM-DD
 const frontMatterDate = (d) => d.toISOString().replace("T", " ").replace(/\.\d+Z$/, " +0000");
 
@@ -52,6 +81,8 @@ async function resolveUrn(link) {
   if (direct) return direct;
   if (/^https?:\/\/lnkd\.in\//.test(link)) {
     // Follow redirects; the final URL (or the page) contains the post's ID.
+    // Known issue 2: no res.ok check, and the page fallback can pick up
+    // another post's ID.
     const res = await fetch(link, { redirect: "follow", headers: { "User-Agent": "Mozilla/5.0" } });
     const found = parseLinkedInUrn(res.url) ?? parseLinkedInUrn(await res.text());
     if (found) return found;
@@ -70,6 +101,8 @@ export function addPost({ urn, slug, text, title = "", media = [], postsDir }) {
   const fileName = `${siteDay(date)}-${slug}.md`;
 
   fs.mkdirSync(postsDir, { recursive: true });
+  // Known issue 3: exact URN match only (ugcPost vs. activity IDs differ).
+  // Known issue 4: a file-name clash can throw before the duplicate is found.
   for (const f of fs.readdirSync(postsDir).filter((f) => f.endsWith(".md"))) {
     const { data } = parseFrontMatter(fs.readFileSync(path.join(postsDir, f), "utf8"));
     if (parseLinkedInUrn(data.links?.linkedin) === urn) return { file: path.join(postsDir, f), added: false };

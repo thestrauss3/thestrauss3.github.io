@@ -54,7 +54,16 @@ test("front matter round-trips maps and lists", () => {
 test("LinkedIn text becomes equivalent Markdown", () => {
   const md = textToMarkdown("Intro:\n• one\n• two\n\nLine a\nLine b\n\n# not a heading\n\n1. not a list");
   assert.equal(md, "Intro:\n\n- one\n- two\n\nLine a\\\\\nLine b\n\n\\# not a heading\n\n1\\. not a list");
-  assert.match(textToMarkdown("Use {{ braces }}"), /^\{% raw %\}/);
+});
+
+test("Markdown, HTML and Liquid characters are shown as written", () => {
+  assert.equal(textToMarkdown("Use {{ x }} and {% y %}"), "Use &#123;&#123; x }} and &#123;% y %}");
+  assert.equal(textToMarkdown("List<string> & 2*3*4 a_b `c` [d](e) |f| $$ ~~g~~"),
+    "List&lt;string&gt; & 2\\*3\\*4 a\\_b \\`c\\` \\[d\\](e) \\|f\\| \\$\\$ &#126;&#126;g&#126;&#126;");
+  assert.equal(textToMarkdown("&amp; stays literal"), "&amp;amp; stays literal");
+  assert.equal(textToMarkdown("    not code\n\n= not a heading\n\n: not a definition"),
+    "not code\n\n\\= not a heading\n\n\\: not a definition");
+  assert.equal(textToMarkdown("• *bold?*"), "- \\*bold?\\*");
 });
 
 test("summaries keep one or two complete sentences", () => {

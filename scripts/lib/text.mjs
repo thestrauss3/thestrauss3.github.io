@@ -52,14 +52,33 @@ export function cleanLinkedInText(text) {
     .trim();
 }
 
+// Escapes one line of plain text so Markdown (kramdown) and Liquid show it
+// exactly as written:
+// - `&` that looks like an entity, `<`, `>`  → HTML entities (no stray tags)
+// - `{`  → &#123;, so Liquid never sees `{{` / `{%` and kramdown never sees `{:`
+// - `~`  → &#126; (no ~~strikethrough~~ or ~~~ code fences)
+// - \ ` * _ [ ] | $  → backslash-escaped (no emphasis, code, links, tables, math)
+// - leading spaces dropped (4+ would make a code block)
+// - a leading # + - = : or "1." is escaped (no headings, lists, definitions)
+export function escapeMarkdownLine(line) {
+  return line
+    .trimStart()
+    .replace(/&(?=#?\w+;)/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\{/g, "&#123;")
+    .replace(/~/g, "&#126;")
+    .replace(/[\\`*_[\]|$]/g, "\\$&")
+    .replace(/^([#+=:-])/, "\\$1")
+    .replace(/^(\d+)\.(\s|$)/, "$1\\.$2");
+}
+
 // Plain text (as pasted from LinkedIn) to Markdown that renders the same way:
 // paragraphs stay paragraphs, "•" lines become a list, other single line
-// breaks are kept, and characters Markdown or Liquid would interpret are escaped.
+// breaks are kept, and everything else is escaped (see escapeMarkdownLine).
 export function textToMarkdown(text) {
   const BULLET = /^\s*[•·▪‣◦]\s*/;
-  const escapeLine = (line) => line
-    .replace(/^(\s*)([#>+*-])(?=\s|$|#)/, "$1\\$2")
-    .replace(/^(\s*\d+)\.(\s)/, "$1\\.$2");
+  const escapeLine = escapeMarkdownLine;
   const blocks = String(text ?? "").replace(/\r\n?/g, "\n").trim().split(/\n\s*\n/);
   const out = blocks.map((block) => {
     const lines = block.split("\n").map((l) => l.trimEnd());
@@ -67,7 +86,7 @@ export function textToMarkdown(text) {
     let prose = [];
     let list = [];
     const flushProse = () => { if (prose.length) parts.push(prose.map(escapeLine).join("\\\\\n")); prose = []; };
-    const flushList = () => { if (list.length) parts.push(list.map((l) => `- ${l}`).join("\n")); list = []; };
+    const flushList = () => { if (list.length) parts.push(list.map((l) => `- ${escapeLine(l)}`).join("\n")); list = []; };
     for (const line of lines) {
       if (BULLET.test(line)) { flushProse(); list.push(line.replace(BULLET, "")); }
       else { flushList(); prose.push(line); }
@@ -76,5 +95,5 @@ export function textToMarkdown(text) {
     flushList();
     return parts.join("\n\n");
   }).join("\n\n");
-  return /\{[{%]/.test(out) ? `{% raw %}\n${out}\n{% endraw %}` : out;
+  return out;
 }

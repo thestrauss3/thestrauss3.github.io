@@ -11,7 +11,8 @@ short name in the address. It only has to be unique within its day.
 ---
 title: ""            # optional. Leave "" for an untitled post (don't delete the
                      # line, or Jekyll invents a title from the slug)
-summary: ""          # optional. Otherwise the lists show the first sentence or two
+summary: "…"         # required: shown in the lists and as the page description.
+                     # The build fails if it's missing or empty.
 links:               # optional: the same post on other platforms
   linkedin: "https://www.linkedin.com/feed/update/urn:li:activity:…/"
 media:               # optional: photos/videos, shown under the post
@@ -31,6 +32,10 @@ Preview them with
 `docker compose run --rm --service-ports jekyll sh -c "bundle install && bundle exec jekyll serve --host 0.0.0.0 --drafts"`.
 
 ## Add a post you already published on LinkedIn
+
+> **Retired.** This script was used once to backfill the existing posts. It has
+> known issues listed at the top of `scripts/add-linkedin-post.mjs`. Read
+> them before using it again.
 
 ```sh
 node scripts/add-linkedin-post.mjs "<post link>" <slug> "<full post text>"

@@ -1,20 +1,10 @@
 {%- comment -%}
-  A post's excerpt for the lists: its `summary` front matter exactly as
-  written when set, otherwise the first one or two sentences of its first
-  paragraph.
+  A post's summary for the lists and its page description: its `summary`
+  front matter, exactly as written. `summary` is required: a post without one
+  stops the build with "Could not locate the included file
+  'post-summary-is-required/<the post's file>'".
 {%- endcomment -%}
 {%- assign p = include.post -%}
-{%- if p.summary and p.summary != "" -%}
-{{- p.summary | escape | strip -}}
-{%- else -%}
-{%- capture nl %}
-{% endcapture -%}
-{%- assign text = p.excerpt | strip_html | replace: nl, " " | replace: "  ", " " | strip -%}
-{%- assign sentences = text | replace: ". ", ".§" | replace: "? ", "?§" | replace: "! ", "!§" | split: "§" -%}
-{%- assign out = sentences[0] -%}
-{%- if sentences.size > 1 and out.size < 140 -%}
-  {%- assign out = out | append: " " | append: sentences[1] -%}
-{%- endif -%}
-{%- if out.size > 320 -%}{%- assign out = out | truncate: 300 -%}{%- endif -%}
-{{- out -}}
-{%- endif -%}
+{%- assign s = p.summary | strip -%}
+{%- if s == "" -%}{%- include post-summary-is-required/{{ p.path }} -%}{%- endif -%}
+{{- s | escape -}}
