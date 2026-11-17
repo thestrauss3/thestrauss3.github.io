@@ -17,6 +17,8 @@ export function splitSentences(text) {
   while ((m = re.exec(flat))) {
     const candidate = flat.slice(start, m.index + m[0].length).trim();
     if (ABBREVIATIONS.test(candidate.replace(/["”’)\]]+$/, ""))) continue;
+    // "unquestionable.. until": a lowercase word next means the sentence goes on.
+    if (/^[a-z]/.test(flat.slice(m.index + m[0].length))) continue;
     out.push(candidate);
     start = m.index + m[0].length;
   }

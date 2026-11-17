@@ -96,3 +96,19 @@ test("add-linkedin-post decodes the date from the ID and is safe to rerun", asyn
   assert.equal(data.date, "2026-07-28 16:55:30 +0000");
   assert.equal(data.summary, "One. Two.");
 });
+
+test("media lists round-trip through front matter, in order", async () => {
+  const { addPost } = await import("../add-linkedin-post.mjs");
+  const outDir = fs.mkdtempSync(path.join(os.tmpdir(), "li-media-"));
+  const media = [{ type: "image", alt: "Team photo: \"launch day\"" }, { type: "video", alt: "" }, { type: "image", alt: "Chart" }];
+  addPost({ urn: "urn:li:activity:7420166171737391104", text: "Hi.", media, outDir });
+  const raw = fs.readFileSync(path.join(outDir, "activity-7420166171737391104.md"), "utf8");
+  assert.match(raw, /\nmedia:\n  - type: "image"\n    file: ""\n    alt: "Team photo: \\"launch day\\""\n  - type: "video"/);
+  const { data } = parseFrontMatter(raw);
+  assert.deepEqual(data.media, media.map((m) => ({ type: m.type, file: "", alt: m.alt })));
+  assert.equal(data.text, "Hi.");
+
+  addPost({ urn: "urn:li:activity:7420166171737391105", text: "No media.", outDir });
+  assert.deepEqual(parseFrontMatter(fs.readFileSync(path.join(outDir, "activity-7420166171737391105.md"), "utf8")).data.media, []);
+  assert.equal(parseFrontMatter('---\ntitle:\nx: "y"\n---\n').data.title, null);
+});

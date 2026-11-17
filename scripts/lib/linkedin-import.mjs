@@ -47,6 +47,11 @@ export function classifyRow(row) {
     date,
     summary: summarize(text),
     syndication: "imported",
+    // The export gives at most one media link per post, and LinkedIn's media
+    // links can expire: download the file and set `file` (see docs/posts.md).
+    media: String(row.MediaUrl ?? "").trim()
+      ? [{ type: /video/i.test(row.MediaUrl) ? "video" : "image", file: "", alt: "", source_url: row.MediaUrl.trim() }]
+      : [],
     visibility: visibility || "UNKNOWN",
     text,
   };

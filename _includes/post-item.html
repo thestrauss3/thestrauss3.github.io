@@ -22,13 +22,13 @@
   <p class="post-links">
     {%- if p.source == "linkedin" %}
     <a href="{{ href }}" aria-describedby="{{ dom_id }}-meta">Read the full post →</a>
-    <a href="{{ p.linkedin_url }}" aria-describedby="{{ dom_id }}-meta">View on LinkedIn →</a>
+    <a target="_blank" rel="noopener" href="{{ p.linkedin_url }}" aria-describedby="{{ dom_id }}-meta">View on LinkedIn →<span class="visually-hidden"> (opens in a new tab)</span></a>
     {%- else %}
     <a href="{{ href }}" aria-describedby="{{ dom_id }}-meta">Read the full post →</a>
     {%- if p.linkedin_url and p.linkedin_url != "" %}
-    <a href="{{ p.linkedin_url }}" aria-describedby="{{ dom_id }}-meta">Discuss on LinkedIn →</a>
+    <a target="_blank" rel="noopener" href="{{ p.linkedin_url }}" aria-describedby="{{ dom_id }}-meta">Discuss on LinkedIn →<span class="visually-hidden"> (opens in a new tab)</span></a>
     {%- else %}
-    <a hidden data-discuss="{{ pid }}" aria-describedby="{{ dom_id }}-meta">Discuss on LinkedIn →</a>
+    <a target="_blank" rel="noopener" hidden data-discuss="{{ pid }}" aria-describedby="{{ dom_id }}-meta">Discuss on LinkedIn →<span class="visually-hidden"> (opens in a new tab)</span></a>
     {%- endif %}
     {%- endif %}
   </p>

@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 // Adds one LinkedIn post to _linkedin/ by hand (no data export needed).
 //
-//   node scripts/add-linkedin-post.mjs <post link> "<first sentence or two>" [--title "Article title"]
+//   node scripts/add-linkedin-post.mjs <post link> "<full post text>" [--title "Article title"]
+//          [--image "description"]... [--video "description"]...
+//
+// --image / --video record each photo or video the post has, in order (repeat
+// the flag for each one). The description doubles as alt text later. The
+// media files themselves are added by hand: set each item's `file`.
 //
 // The link can be the post's https://www.linkedin.com/feed/update/urn:li:... URL
 // (best) or a lnkd.in short link, which is resolved online. The publication
@@ -40,7 +45,7 @@ async function resolveUrn(link) {
   throw new Error("Couldn't find the post ID in that link. Use the post's linkedin.com/feed/update/urn:li:... link (⋯ menu → Copy link to post).");
 }
 
-export function addPost({ urn, text, title = "", outDir }) {
+export function addPost({ urn, text, title = "", media = [], outDir }) {
   const clean = cleanLinkedInText(text);
   if (!clean) throw new Error("Give the post's first sentence or two.");
   const file = path.join(outDir, fileNameFor(urn));
@@ -54,6 +59,9 @@ export function addPost({ urn, text, title = "", outDir }) {
     date: exportDate(dateFromUrn(urn)),
     summary: summarize(clean),
     syndication: "imported",
+    // Photos/videos on the original post. `file` is empty until the media is
+    // downloaded into the repo; the site doesn't display media yet.
+    media: media.map((m) => ({ type: m.type, file: "", alt: m.alt ?? "" })),
     text: clean,
   }));
   return { file, added: true };
@@ -61,16 +69,22 @@ export function addPost({ urn, text, title = "", outDir }) {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
-  const t = args.indexOf("--title");
-  const title = t > -1 ? args.splice(t, 2)[1] ?? "" : "";
-  const [link, text] = args;
+  let title = "";
+  const media = [];
+  const rest = [];
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--title") title = args[++i] ?? "";
+    else if (args[i] === "--image" || args[i] === "--video") media.push({ type: args[i].slice(2), alt: args[++i] ?? "" });
+    else rest.push(args[i]);
+  }
+  const [link, text] = rest;
   if (!link || !text) {
-    console.log('Usage: node scripts/add-linkedin-post.mjs <post link> "<first sentence or two>" [--title "Article title"]');
+    console.log('Usage: node scripts/add-linkedin-post.mjs <post link> "<full post text>" [--title "Article title"] [--image "description"]... [--video "description"]...');
     process.exit(1);
   }
   try {
     const urn = await resolveUrn(link);
-    const { file, added } = addPost({ urn, text, title, outDir: path.join(repoRoot, "_linkedin") });
+    const { file, added } = addPost({ urn, text, title, media, outDir: path.join(repoRoot, "_linkedin") });
     const date = dateFromUrn(urn).toLocaleDateString("en-US", { timeZone: "America/Los_Angeles", dateStyle: "medium" });
     console.log(`${added ? "Added" : "Already there, left unchanged:"} ${path.relative(repoRoot, file)} (${date})`);
   } catch (err) {

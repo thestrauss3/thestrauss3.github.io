@@ -44,8 +44,13 @@ Optional front matter:
 ## Add a LinkedIn post by hand
 
 ```sh
-node scripts/add-linkedin-post.mjs "<post link>" "<full post text>" [--title "Article title"]
+node scripts/add-linkedin-post.mjs "<post link>" "<full post text>" [--title "Article title"] \
+  [--image "description"]... [--video "description"]...
 ```
+
+Repeat `--image` / `--video` once per photo or video, in the order they appear
+on the post. Each one is recorded under `media:` with a `file` (empty for now)
+and an `alt` description. The site doesn't display media yet.
 
 Use the link from the post's **⋯ → Copy link to post** (a `lnkd.in` short link
 also works). Paste the whole post (click "…see more" first): the page shows all of
